@@ -133,12 +133,12 @@ abstract class SQLSplitter
                 if ($delimiterResult != null) {
                     // it's delimiter
                     list($delimiterSymbol, $delimiterEndIndex) = $delimiterResult;
-                    $query = substr($query, $delimiterEndIndex);
+                    $query = mb_substr($query, $delimiterEndIndex);
                     return self::getStatements($query, $dbType, $delimiterSymbol);
                 }
             }
             if ($char == "$" && $isInComment == false && $isInString == false) {
-                $queryUntilTagSymbol = substr($query, $index);
+                $queryUntilTagSymbol = mb_substr($query, $index);
                 if ($isInTag == false) {
                     $tagSymbolResult = self::getTag($queryUntilTagSymbol, $dbType);
                     if ($tagSymbolResult != null) {
@@ -188,8 +188,8 @@ abstract class SQLSplitter
      */
     private static function getQueryParts(string $query, int $splittingIndex, string $delimiter)
     {
-        $statement = substr($query, 0, $splittingIndex);
-        $restOfQuery = substr($query, $splittingIndex + strlen($delimiter));
+        $statement = mb_substr($query, 0, $splittingIndex);
+        $restOfQuery = mb_substr($query, $splittingIndex + strlen($delimiter));
         if ($statement != null) {
             $statement = trim($statement);
         }
@@ -208,16 +208,16 @@ abstract class SQLSplitter
         if ($dbType == self::DB_MYSQL) {
             $delimiterKeyword = 'delimiter ';
             $delimiterLength = strlen($delimiterKeyword);
-            $parsedQueryAfterIndexOriginal = substr($query, $index);
+            $parsedQueryAfterIndexOriginal = mb_substr($query, $index);
             $indexOfDelimiterKeyword = strpos(strtolower($parsedQueryAfterIndexOriginal), $delimiterKeyword);
             if ($indexOfDelimiterKeyword === 0) {
-                $parsedQueryAfterIndex = substr($query, $index);
+                $parsedQueryAfterIndex = mb_substr($query, $index);
                 $indexOfNewLine = strpos($parsedQueryAfterIndex, "\n");
                 if ($indexOfNewLine == -1) {
                     $indexOfNewLine = strlen($query);
                 }
-                $parsedQueryAfterIndex = substr($parsedQueryAfterIndex, 0, $indexOfNewLine);
-                $parsedQueryAfterIndex = substr($parsedQueryAfterIndex, $delimiterLength);
+                $parsedQueryAfterIndex = mb_substr($parsedQueryAfterIndex, 0, $indexOfNewLine);
+                $parsedQueryAfterIndex = mb_substr($parsedQueryAfterIndex, $delimiterLength);
                 $delimiterSymbol = trim($parsedQueryAfterIndex);
                 $delimiterSymbol = self::clearTextUntilComment($delimiterSymbol, $dbType);
                 if ($delimiterSymbol != null) {
